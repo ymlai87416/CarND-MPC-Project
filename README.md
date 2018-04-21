@@ -21,7 +21,7 @@
 [image19]: ./output/t_0.PNG "timestep 0"
 [image20]: ./output/timestep_1_n.PNG "timestep 1 to n"
 [image21]: ./output/final_cost_func.PNG "final cost function"
-[image21]: ./output/optimization_prob.PNG "optimization"
+[image22]: ./output/optimization_prob.PNG "optimization"
 
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
