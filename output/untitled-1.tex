@@ -1,0 +1,44 @@
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{amsmath,amsfonts,amsthm} % Math packages3
+\usepackage{scalerel}
+
+\begin{document}
+
+$$x_{t+1} = x_t + v * cos(\psi_t) * dt$$
+
+$$y_{t+1} = y_t + v * sin(\psi_t) * dt$$
+
+$$\psi_{t+1} = \psi_{t} + \frac{v_t}{L_f} * \delta_t * dt $$
+
+$$ v_{t+1} = v_t + a_t * dt $$
+
+$$ cte_{t+1} = y_t - f(x_t) + (v_t * sin(e_{\psi_{\scaleto{t}{3pt}}}) * dt)$$
+
+$$ e_{\psi_{\scaleto{t+1}{3pt}}} = \psi_t - \arctan{(f'(x_t))} + (\frac{v_t}{L_f} * \delta_t * dt)$$
+
+$$ cost_t = \sqrt{(X_{dst} - X_t)^2 + (Y_{dst} - Y_t)^2}$$
+
+$$ cost_t = (v_t - v_{reference})^2$$
+
+$$ cost_t = \delta_t^2$$
+
+$$ cost_t = (\delta_{t+1} - \delta_t)^2 + (a_{t+1} - a_t)^2 $$
+
+$$ J = \sum_{t=1}^N cte_t^2 + e_{\psi_{\scaleto{t}{3pt}}}^2 + \delta^2 + [(\delta_t - \delta_{t-1}) ^2 + (a_t - a_{t-1})^2] + (v_t - v_{reference})^2) $$
+
+\begin{equation*}
+\begin{aligned}
+& \underset{a, \delta}{\text{minimize}}
+& & cost_{x_{\scaleto{1}{3pt}}, y_{\scaleto{1}{3pt}}, v_{\scaleto{1}{3pt}}, \psi_{\scaleto{1}{3pt}}, cte_{\scaleto{1}{3pt}}, e_{\psi_{\scaleto{1}{3pt}}}, f}(a, \delta)\\
+& \text{subject to}
+& & \delta \in \mathbb{R}^{N-1} \\
+& & & a \in \mathbb{R}^{N-1} \\
+& & & \ang{-25} \preceq \delta \preceq \ang{25} \\
+& & & -1 \preceq a \preceq 1 \\
+\end{aligned}
+\end{equation*}
+
+\end{document}

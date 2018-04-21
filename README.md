@@ -21,6 +21,7 @@
 [image19]: ./output/t_0.PNG "timestep 0"
 [image20]: ./output/timestep_1_n.PNG "timestep 1 to n"
 [image21]: ./output/final_cost_func.PNG "final cost function"
+[image21]: ./output/optimization_prob.PNG "optimization"
 
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
@@ -124,7 +125,6 @@ The update equations and the constraint are as follow:
 | Y direction | ![alt text][image3] |
 | Orientation | ![alt text][image4] |
 | velocity | ![alt text][image5] |
-| X direction | ![alt text][image2] |
 
 where ![alt text][image10] measures the distance between the center of mass of the vehicle and it's front axle. The larger the vehicle, the slower
 the turn rate. When a vehicle is at higher speed, the vehicle turn quicker than at lower speed, so v is also used to calculate the orientation of the car.
@@ -150,14 +150,14 @@ can compare which solution (![alt text][image11], ![alt text][image12]) is bette
 
 Here are the possible cost function
 
-| Errors / Objectives         | Description  | Equation |
+| Errors / Soft constraint         | Description  | Equation |
 |:-----:| :-----| :-----:|
 | Cross track error | The error between the center of the road and the vehicle's position as the cross track error | ![alt text][image13] |
 | Orientation error | The error penalizes if the car does not head the correct direction | ![alt text][image14] |
-| Objective: Destination | It penalized if the car is not at the destination | ![alt text][image17] |
-| Objective: Reference velocity | It penalized if the car is not driving at reference velocity | ![alt text][image18] |
-| Objective: Steering angle | It penalized if the steering angle is to much | ![alt text][image15] |
-| Objective: Rate of change in input | It penalized if the changes of the control inputs is too high | ![alt text][image16] |
+| Soft constraint: Destination | It penalized if the car is not at the destination | ![alt text][image17] |
+| Soft constraint: Reference velocity | It penalized if the car is not driving at reference velocity | ![alt text][image18] |
+| Soft constraint: Steering angle | It penalized if the steering angle is to much | ![alt text][image15] |
+| Soft constraint: Rate of change in input | It penalized if the changes of the control inputs is too high | ![alt text][image16] |
 
 Final cost function
 
@@ -168,6 +168,11 @@ Let define the current time is ![alt text][image19] and the MPC model predicts N
 Hence, the final cost function is 
 
 ![alt text][image21]
+
+The optimization problem is:
+
+![alt text][image22]
+
 
 ## Simulation
 
