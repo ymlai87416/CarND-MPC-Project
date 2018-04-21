@@ -1,3 +1,27 @@
+[//]: # (Image References)
+
+[image1]: ./output/MPC.PNG "MPC equation"
+[image2]: ./output/x_update.PNG "update x"
+[image3]: ./output/y_update.PNG "update y"
+[image4]: ./output/yaw_update.PNG "update yaw"
+[image5]: ./output/v_update.PNG "update v"
+[image6]: ./output/x.PNG "x"
+[image7]: ./output/y.PNG "y"
+[image8]: ./output/yaw.PNG "yaw"
+[image9]: ./output/v.PNG "v"
+[image10]: ./output/Lf.PNG "Lf"
+[image11]: ./output/sigma.PNG "sigma"
+[image12]: ./output/a.PNG "a"
+[image13]: ./output/cte.PNG "cte"
+[image14]: ./output/orientation_error.PNG "orientation error"
+[image15]: ./output/cost_steering.PNG "cost steering"
+[image16]: ./output/cost_high_change.PNG "cost high change"
+[image17]: ./output/cost_distance.PNG "cost distance change"
+[image18]: ./output/cost_reference_v.PNG "cost reference velocity"
+[image19]: ./output/t_0.PNG "timestep 0"
+[image20]: ./output/timestep_1_n.PNG "timestep 1 to n"
+[image21]: ./output/final_cost_func.PNG "final cost function"
+
 # CarND-Controls-MPC
 Self-Driving Car Engineer Nanodegree Program
 
@@ -70,39 +94,104 @@ More information is only accessible by people who are already enrolled in Term 2
 of CarND. If you are enrolled, see [the project page](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/b1ff3be0-c904-438e-aad3-2b5379f0e0c3/concepts/1a2255a0-e23c-44cf-8d41-39b8a3c8264a)
 for instructions and the project rubric.
 
-## Hints!
+## Implementation
 
-* You don't have to follow this directory structure, but if you do, your work
-  will span all of the .cpp files here. Keep an eye out for TODOs.
+### Model
+In this project, I build a kinematic model and use in with MPC to control the car via accelerator, break and steering wheel.
 
-## Call for IDE Profiles Pull Requests
+Kinematic model only considers the car kinematic and does not consider other factors such as forces acting on the car,
+slip angle, slip ration and the tire model etc. 
 
-Help your fellow students!
+The kinematic model is a simple model hence it can be calculated in near real time, and the result is often accurate enough
+to control the car under normal situation.
 
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to we ensure
-that students don't feel pressured to use one IDE or another.
+There is another kind of model called dynamic model which considers more factors but it is more complex.
 
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
+#### State
+The vehicle state can be model in (![alt text][image6], ![alt text][image7], ![alt text][image8], ![alt text][image9]),
+which represent the x direction, y direction, orientation and the velocity of the vehicle.
 
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
+#### Actuators
+The control inputs / actuators are (![alt text][image11], ![alt text][image12]),
+which represent the turn rate and the acceleration of the vehicle. 
 
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
+#### Update equations
+The update equations and the constraint are as follow:
 
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
+X direction update:
 
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
+![alt text][image2]
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+Y direction update: 
+
+![alt text][image3]
+
+orientation update:
+
+![alt text][image4]
+
+![alt text][image10] measures the distance between the center of mass of the vehicle and it's front axle. The larger the vehicle, the slower
+the turn rate.
+
+When a vehicle is at higher speed, the vehicle turn quicker than at lower speed.
+
+velocity update:
+
+![alt text][image5]
+
+
+### Timestep length and elapse duration
+
+To find out the timestep length and elapse duration, we do ...
+
+### Polynomial fitting and MPC Preprocessing
+Before using MPC to calculate the acceleration and the steering angle for the current timestep, a path is needed, and I use a
+3rd order polynomial curve to present the desired path.
+
+### Model Predictive Control with Latency
+In this project, the Model Predictive Control have a pre-set latency of 100 millisecond. The 100 millisecond is set to allow
+MPC to calculate a more accurate solution and allow signal delay from other sensor components.
+
+
+#### The cost function
+In order for the MPC to find the control input, beside the kinematic model, I have to provide a cost function so that MPC 
+can compare which solution (![alt text][image11], ![alt text][image12]) is better.
+
+Cross track error: the error between the center of the road and the vehicle's position as the cross track error
+
+![alt text][image13]
+
+ 
+Orientation error:  for penalize if the car does not head the correct direction
+
+![alt text][image14]
+
+Distance between the car and the destination
+
+![alt text][image17]
+
+Keeping the car at reference velocity
+
+![alt text][image18]
+
+Prevent sudden high input value from steering
+
+![alt text][image15]
+
+Prevent charge rate of input value being too high
+
+![alt text][image16]
+
+Final cost function
+
+In this project, we would like the car to go at reference speed around the track. 
+Let define the current time is ![alt text][image19] and the MPC model predicts N time-steps forward, denoted these timestamps as
+![alt text][image20]
+
+Hence, the final cost function is 
+
+![alt text][image21]
+
+## Simulation
+
+Here is the result
