@@ -118,31 +118,22 @@ which represent the turn rate and the acceleration of the vehicle.
 #### Update equations
 The update equations and the constraint are as follow:
 
-X direction update:
+| Updated state          | Equation  |
+|:-----:| :-----:|
+| X direction | ![alt text][image2] |
+| Y direction | ![alt text][image3] |
+| Orientation | ![alt text][image4] |
+| velocity | ![alt text][image5] |
+| X direction | ![alt text][image2] |
 
-![alt text][image2]
-
-Y direction update: 
-
-![alt text][image3]
-
-orientation update:
-
-![alt text][image4]
-
-![alt text][image10] measures the distance between the center of mass of the vehicle and it's front axle. The larger the vehicle, the slower
-the turn rate.
-
-When a vehicle is at higher speed, the vehicle turn quicker than at lower speed.
-
-velocity update:
-
-![alt text][image5]
+where ![alt text][image10] measures the distance between the center of mass of the vehicle and it's front axle. The larger the vehicle, the slower
+the turn rate. When a vehicle is at higher speed, the vehicle turn quicker than at lower speed, so v is also used to calculate the orientation of the car.
 
 
 ### Timestep length and elapse duration
 
-To find out the timestep length and elapse duration, we do ...
+To find out the timestep length and elapse duration, I do a grid search on both the ?? and ??, and find that where ???=???
+and ???=??? , MPC model gives the best result.
 
 ### Polynomial fitting and MPC Preprocessing
 Before using MPC to calculate the acceleration and the steering angle for the current timestep, a path is needed, and I use a
@@ -157,30 +148,16 @@ MPC to calculate a more accurate solution and allow signal delay from other sens
 In order for the MPC to find the control input, beside the kinematic model, I have to provide a cost function so that MPC 
 can compare which solution (![alt text][image11], ![alt text][image12]) is better.
 
-Cross track error: the error between the center of the road and the vehicle's position as the cross track error
+Here are the possible cost function
 
-![alt text][image13]
-
- 
-Orientation error:  for penalize if the car does not head the correct direction
-
-![alt text][image14]
-
-Distance between the car and the destination
-
-![alt text][image17]
-
-Keeping the car at reference velocity
-
-![alt text][image18]
-
-Prevent sudden high input value from steering
-
-![alt text][image15]
-
-Prevent charge rate of input value being too high
-
-![alt text][image16]
+| Errors / Objectives         | Description  | Equation |
+|:-----:| :-----| :-----:|
+| Cross track error | The error between the center of the road and the vehicle's position as the cross track error | ![alt text][image13] |
+| Orientation error | The error penalizes if the car does not head the correct direction | ![alt text][image14] |
+| Objective: Destination | It penalized if the car is not at the destination | ![alt text][image17] |
+| Objective: Reference velocity | It penalized if the car is not driving at reference velocity | ![alt text][image18] |
+| Objective: Steering angle | It penalized if the steering angle is to much | ![alt text][image15] |
+| Objective: Rate of change in input | It penalized if the changes of the control inputs is too high | ![alt text][image16] |
 
 Final cost function
 
