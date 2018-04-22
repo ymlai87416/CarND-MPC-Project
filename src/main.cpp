@@ -93,7 +93,7 @@ int main() {
 
           transformWayPointToCarPerspective(px, py, psi, ptsx, ptsy, next_x_vals, next_y_vals);
 
-          robot.calculateSteeringAngleAndThrottle(px, py, psi, v, next_x_vals, next_y_vals,
+          robot.calculateSteeringAngleAndThrottle(0, 0, 0, v, next_x_vals, next_y_vals,
                                                   steer_value, throttle_value,
                                                   mpc_x_vals, mpc_y_vals);
           json msgJson;
@@ -122,7 +122,7 @@ int main() {
           //
           // NOTE: REMEMBER TO SET THIS TO 100 MILLISECONDS BEFORE
           // SUBMITTING.
-          this_thread::sleep_for(chrono::milliseconds(100));
+          this_thread::sleep_for(chrono::milliseconds(0));
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }
       } else {

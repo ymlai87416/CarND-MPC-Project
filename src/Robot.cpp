@@ -60,8 +60,8 @@ void Robot::calculateSteeringAngleAndThrottle(double x, double y, double psi, do
                                               double& steeringAngle, double& throttle,
                                               vector<double>& trajectory_x, vector<double>& trajectory_y){
 
-  Eigen::VectorXd vector_ptsx = Eigen::VectorXd::Map(ptsX.data(), ptsX.size());
-  Eigen::VectorXd vector_ptsy = Eigen::VectorXd::Map(ptsY.data(), ptsY.size());
+  Eigen::VectorXd vector_ptsx = Eigen::VectorXd::Map(ptsX.data(), 6 /*ptsX.size()*/);
+  Eigen::VectorXd vector_ptsy = Eigen::VectorXd::Map(ptsY.data(), 6 /*ptsY.size()*/);
 
   Eigen::VectorXd path = polyfit(vector_ptsx, vector_ptsy, 3);
 
@@ -69,8 +69,8 @@ void Robot::calculateSteeringAngleAndThrottle(double x, double y, double psi, do
   path_derivative[0] = path[1];
   path_derivative[1] = 2*path[2];
 
-  double cte = 0 - polyeval(path, x);
-  double epsi = 0 - atan(polyeval(path_derivative, x));
+  double cte = polyeval(path, 0) - 0;
+  double epsi = 0 - atan(polyeval(path_derivative, 0));
 
   Eigen::VectorXd state = Eigen::VectorXd(6);
   state << 0, 0, 0, speed, cte, epsi;
@@ -81,10 +81,10 @@ void Robot::calculateSteeringAngleAndThrottle(double x, double y, double psi, do
   throttle = result[1];
 
   trajectory_x.clear();
-  for(size_t i=0; i<N-1; ++i)
-    trajectory_x.push_back(result[i]+2);
-
   trajectory_y.clear();
-  for(size_t i=0; i<N-1; ++i)
-    trajectory_y.push_back(result[i]+N+2);
+  for(size_t i=2; i<result.size(); i+=2){
+    trajectory_x.push_back(result[i]);
+    trajectory_y.push_back(result[i+1]);
+  }
+    
 }
