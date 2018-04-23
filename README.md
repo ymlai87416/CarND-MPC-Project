@@ -63,28 +63,9 @@ Self-Driving Car Engineer Nanodegree Program
 3. Compile: `cmake .. && make`
 4. Run it: `./mpc`.
 
-## Tips
-
-1. It's recommended to test the MPC on basic examples to see if your implementation behaves as desired. One possible example
-is the vehicle starting offset of a straight line (reference). If the MPC implementation is correct, after some number of timesteps
-(not too many) it should find and track the reference line.
-2. The `lake_track_waypoints.csv` file has the waypoints of the lake track. You could use this to fit polynomials and points and see of how well your model tracks curve. NOTE: This file might be not completely in sync with the simulator so your solution should NOT depend on it.
-3. For visualization this C++ [matplotlib wrapper](https://github.com/lava/matplotlib-cpp) could be helpful.)
-4.  Tips for setting up your environment are available [here](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/0949fca6-b379-42af-a919-ee50aa304e6a/lessons/f758c44c-5e40-4e01-93b5-1a82aa4e044f/concepts/23d376c7-0195-4276-bdf0-e02f1f3c665d)
-5. **VM Latency:** Some students have reported differences in behavior using VM's ostensibly a result of latency.  Please let us know if issues arise as a result of a VM environment.
-
-## Editor Settings
-
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
-
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
-
 ## Code Style
 
-Please (do your best to) stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
+This project code style sticks to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
 
 ## Project Instructions and Rubric
 
@@ -132,17 +113,60 @@ the turn rate. When a vehicle is at higher speed, the vehicle turn quicker than 
 
 ### Timestep length and elapse duration
 
-To find out the timestep length and elapse duration, I do a grid search on both the ?? and ??, and find that where ???=???
-and ???=??? , MPC model gives the best result.
+In the case of driving a car, elapse duration should be a few seconds, at most. Beyond that horizon, the environment 
+will change enough that it won't make sense to predict any further into the future.
+
+For the timestep length, MPC attempts to approximate a continuous reference trajectory by means of discrete paths between actuations. 
+Larger values of dt result in less frequent actuations, which makes it harder to accurately approximate a continuous 
+reference trajectory. This is sometimes called "discretization error".
+
+To find out the timestep length and elapse duration, I try the following value
+
+Under reference velocity of 70mph, and delay of 0.1ms
+
+| N | dt  | Result |
+|:-----:| :-----| :-----|
+| 10 | 0.2 | (Chosen) The car completed a lap with speed around 50mph |
+| 10 | 0.1 | The car left the track |
+| 10 | 0.15 | The car left the track |
+| 10 | 0.5 | The car slow down to 20-30mph and completed a lap |
+| 20 | 0.2 | The car completed a lap with speed around 50mph |
+
+After trying the above combination, I think that the combination  of N=10 and dt=0.2 is the best because the computational
+power to calculate the result is smaller than N=20 and dt=0.2, and give the fastest result without leaving the track.
+
+When delay=0s, the car can complete a lap even when dt=0.1s, but where delay=0.1s, dt must be larger 
+to keep the car on track in my implementation.
+
+Increasing N beyond threshold make no difference because the car will only take the steering angle and acceleration values
+of the first time interval [0, dt), which it is not likely to be affected by future events beyond the threshold. 
+
+Decreasing N under the threshold, the car is more likely to crash at the curve, because the car is not able to slow down
+to make the turn.
 
 ### Polynomial fitting and MPC Preprocessing
+
 Before using MPC to calculate the acceleration and the steering angle for the current timestep, a path is needed, and I use a
 3rd order polynomial curve to present the desired path.
 
+To compensate with the 0.1s delay, I have first predict the state of the car after 0.1s, and use this as the origin of the
+car coordination system. 
+
+I then transform the path given into the car coordination system.
+
+Under the given car coordination system, the initial state of the car is (x=0, y=0, psi=0, v=v+a*dt). I than calculate the
+cross track error and the orientation error and pass them to the solver for an answer.
+
+You can refer to this part of [main.cpp](https://github.com/ymlai87416/CarND-MPC-Project/blob/01f19a62560dd1954a607ecb501ce585f939d671/src/main.cpp#L112-L115) for actual implementation.
+
 ### Model Predictive Control with Latency
+
 In this project, the Model Predictive Control have a pre-set latency of 100 millisecond. The 100 millisecond is set to allow
 MPC to calculate a more accurate solution and allow signal delay from other sensor components.
 
+Because of the delay, I have discussed about the necessary code changes I have made in the previous section. They are
+1. Tuning of dt
+2. Selecting the origin of the car coordination system.
 
 #### The cost function
 In order for the MPC to find the control input, beside the kinematic model, I have to provide a cost function so that MPC 
@@ -176,4 +200,4 @@ The optimization problem is:
 
 ## Simulation
 
-Here is the result
+Here is the [result](https://youtu.be/UhaL21-VTg4)
