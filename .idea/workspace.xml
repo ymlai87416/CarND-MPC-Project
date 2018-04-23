@@ -174,17 +174,28 @@
       <workItem from="1523549665997" duration="3219000" />
       <workItem from="1524270640147" duration="8498000" />
       <workItem from="1524289740407" duration="832000" />
+<<<<<<< HEAD
+      <workItem from="1524301102677" duration="893000" />
+=======
       <workItem from="1524301102677" duration="295000" />
       <workItem from="1524331440105" duration="36204000" />
       <workItem from="1524407893696" duration="143000" />
+>>>>>>> b44f4d2e6423af6be7bf0d1fef976df29b16f1e4
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
+<<<<<<< HEAD
+    <option name="totallyTimeSpent" value="18147000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+=======
     <option name="totallyTimeSpent" value="53896000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="2236" y="144" width="1857" height="1092" extended-state="6" />
+>>>>>>> b44f4d2e6423af6be7bf0d1fef976df29b16f1e4
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13318777" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
