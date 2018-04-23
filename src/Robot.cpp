@@ -55,12 +55,12 @@ double Robot::polyeval(Eigen::VectorXd coeffs, double x) {
   return result;
 }
 
-void Robot::predictStateAfter(double delay, double x, double y, double psi, double speed,
+void Robot::predictStateAfter(double dt, double x, double y, double psi, double speed, double delta, double a,
                        double& x_d, double& y_d, double& psi_d, double& speed_d){
   x_d = x + speed * cos(psi)*dt;
   y_d = y + speed * sin(psi)*dt;
-  psi_d = psi;
-  speed_d = speed;
+  psi_d = psi + speed/Lf*delta*dt;
+  speed_d = speed + a*dt;
 }
 
 

@@ -31,7 +31,7 @@ public:
   /*
    * find out delay state
    */
-  void predictStateAfter(double delay, double x, double y, double psi, double speed,
+  void predictStateAfter(double delay, double x, double y, double psi, double speed, double delta, double a,
                           double& x_d, double& y_d, double& psi_d, double& speed_d);
 
   /*

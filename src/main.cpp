@@ -58,7 +58,7 @@ int main() {
   // MPC is initialized here!
   //MPC mpc;
   Robot robot;
-  robot.Init(10, 0.1, 70);
+  robot.Init(15, 0.2, 70);
 
   h.onMessage([&robot](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
@@ -80,6 +80,9 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
+          double delta = j[1]["steering_angle"];
+          delta = delta * deg2rad(25);
+          double a = j[1]["throttle"];
 
           /*
           * TODO: Calculate steering angle and throttle using MPC.
@@ -106,7 +109,7 @@ int main() {
           vector<double> path_coeffs;
 
           double px_d, py_d, psi_d, v_d;
-          robot.predictStateAfter(0, px, py, psi, v, px_d, py_d, psi_d, v_d);
+          robot.predictStateAfter(0.1, px, py, psi, v, delta/rad2deg(25), a, px_d, py_d, psi_d, v_d);
           //std::cout << px << " " << px_d << " " << py << " " << py_d << " " << psi << " " << psi_d << std::endl;
 
           transformWayPointToCarPerspective(px_d, py_d, psi_d, ptsx, ptsy, transform_ptsx, transform_ptsy);
@@ -127,7 +130,7 @@ int main() {
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
-          msgJson["steering_angle"] = steer_value / deg2rad(25);
+          msgJson["steering_angle"] = steer_value;
           msgJson["throttle"] = throttle_value;
 
           msgJson["mpc_x"] = mpc_x_vals;
@@ -150,7 +153,7 @@ int main() {
           //
           // NOTE: REMEMBER TO SET THIS TO 100 MILLISECONDS BEFORE
           // SUBMITTING.
-          this_thread::sleep_for(chrono::milliseconds(0));
+          this_thread::sleep_for(chrono::milliseconds(100));
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }
       } else {
