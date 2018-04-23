@@ -55,9 +55,19 @@ double Robot::polyeval(Eigen::VectorXd coeffs, double x) {
   return result;
 }
 
+void Robot::predictStateAfter(double delay, double x, double y, double psi, double speed,
+                       double& x_d, double& y_d, double& psi_d, double& speed_d){
+  x_d = x + speed * cos(psi)*dt;
+  y_d = y + speed * sin(psi)*dt;
+  psi_d = psi;
+  speed_d = speed;
+}
+
+
 void Robot::calculateSteeringAngleAndThrottle(double x, double y, double psi, double speed,
                                               vector<double> ptsX, vector<double> ptsY,
                                               double& steeringAngle, double& throttle,
+                                              vector<double>& path_coeffs,
                                               vector<double>& trajectory_x, vector<double>& trajectory_y){
 
   Eigen::VectorXd vector_ptsx = Eigen::VectorXd::Map(ptsX.data(), 6 /*ptsX.size()*/);
@@ -65,15 +75,19 @@ void Robot::calculateSteeringAngleAndThrottle(double x, double y, double psi, do
 
   Eigen::VectorXd path = polyfit(vector_ptsx, vector_ptsy, 3);
 
+  path_coeffs.clear();
+  for(int i=0; i<3; ++i)
+    path_coeffs.push_back(path[i]);
+
   Eigen::VectorXd path_derivative = Eigen::VectorXd(2);
   path_derivative[0] = path[1];
   path_derivative[1] = 2*path[2];
 
-  double cte = polyeval(path, 0) - 0;
-  double epsi = 0 - atan(polyeval(path_derivative, 0));
+  double cte = polyeval(path, x) - y;
+  double epsi = psi - atan(polyeval(path_derivative, x));
 
   Eigen::VectorXd state = Eigen::VectorXd(6);
-  state << 0, 0, 0, speed, cte, epsi;
+  state << x, y, psi, speed, cte, epsi;
 
   vector<double> result = mpc.Solve(state, path);
 

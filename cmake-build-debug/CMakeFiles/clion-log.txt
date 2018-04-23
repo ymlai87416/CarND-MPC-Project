@@ -1,4 +1,4 @@
-/home/tom/clion-2017.3.1/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/tom/GitProjects/CarND-MPC-Project
+/home/ymlai87416/clion-2018.1.1/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/ymlai87416/GitProjects/CarND-MPC-Project
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/tom/GitProjects/CarND-MPC-Project/cmake-build-debug
+-- Build files have been written to: /home/ymlai87416/GitProjects/CarND-MPC-Project/cmake-build-debug

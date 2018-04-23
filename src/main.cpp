@@ -44,13 +44,21 @@ void transformWayPointToCarPerspective(int px, int py, double psi,
   }
 }
 
+double polyeval(vector<double> coeffs, double x) {
+  double result = 0.0;
+  for (size_t i = 0; i < coeffs.size(); i++) {
+    result = result + coeffs[i] * pow(x, i);
+  }
+  return result;
+}
+
 int main() {
   uWS::Hub h;
 
   // MPC is initialized here!
   //MPC mpc;
   Robot robot;
-  robot.Init(9, 0.1, 70);
+  robot.Init(10, 0.1, 70);
 
   h.onMessage([&robot](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
@@ -87,15 +95,35 @@ int main() {
           vector<double> mpc_x_vals;
           vector<double> mpc_y_vals;
 
+          //Transformed ptsx and ptsy
+          vector<double> transform_ptsx;
+          vector<double> transform_ptsy;
+
           //Display the waypoints/reference line
           vector<double> next_x_vals;
           vector<double> next_y_vals;
 
-          transformWayPointToCarPerspective(px, py, psi, ptsx, ptsy, next_x_vals, next_y_vals);
+          vector<double> path_coeffs;
 
-          robot.calculateSteeringAngleAndThrottle(0, 0, 0, v, next_x_vals, next_y_vals,
+          double px_d, py_d, psi_d, v_d;
+          robot.predictStateAfter(0, px, py, psi, v, px_d, py_d, psi_d, v_d);
+          //std::cout << px << " " << px_d << " " << py << " " << py_d << " " << psi << " " << psi_d << std::endl;
+
+          transformWayPointToCarPerspective(px_d, py_d, psi_d, ptsx, ptsy, transform_ptsx, transform_ptsy);
+
+          robot.calculateSteeringAngleAndThrottle(0, 0, 0, v_d, transform_ptsx, transform_ptsy,
                                                   steer_value, throttle_value,
+                                                  path_coeffs,
                                                   mpc_x_vals, mpc_y_vals);
+
+          double poly_inc = 2.5;
+          int num_points = 25;
+
+          for(int i=1; i<num_points; ++i){
+            next_x_vals.push_back(poly_inc*i);
+            next_y_vals.push_back(polyeval(path_coeffs, poly_inc*i));
+          }
+
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].

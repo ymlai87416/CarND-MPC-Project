@@ -29,11 +29,18 @@ public:
   void Init(size_t num_step_forward, double step_interval, double reference_velocity);
 
   /*
+   * find out delay state
+   */
+  void predictStateAfter(double delay, double x, double y, double psi, double speed,
+                          double& x_d, double& y_d, double& psi_d, double& speed_d);
+
+  /*
    * calculate the steering angle and thottle
    */
   void calculateSteeringAngleAndThrottle(double x, double y, double psi, double speed,
                                          vector<double> ptsX, vector<double> ptsY,
                                          double& steeringAngle, double& throttle,
+                                         vector<double>& path_coeffs,
                                          vector<double>& trajectory_x, vector<double>& trajectory_y);
 
 
