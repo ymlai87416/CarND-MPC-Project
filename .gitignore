@@ -5,3 +5,4 @@ tags
 .DS_Store
 Ipopt-3.12.7
 cmake-build-debug
+.idea
