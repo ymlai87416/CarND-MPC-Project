@@ -79,9 +79,9 @@ for instructions and the project rubric.
 ## Implementation
 
 ### Model
-In this project, I build a kinematic model and use it with MPC to control the car via actuator.
+In this project, I build a kinematic model and use it with MPC to control the car via actuators.
 
-Kinematic model only considers the car kinematic and does not consider other factors such as forces acting on the car,
+The kinematic model only considers the car kinematic and does not consider other factors such as forces acting on the car,
 slip angle, slip ration and the tire model etc. 
 
 The kinematic model is a simple model hence it can be calculated in near real time, and the result is often accurate enough
@@ -91,9 +91,9 @@ There is another kind of model called dynamic model which considers more factors
 
 #### State
 The primary state of the car are (![alt text][image6], ![alt text][image7], ![alt text][image8], ![alt text][image9]),
-which represent the x direction, y direction, orientation and the velocity of the vehicle.
+which represent the x-direction, y-direction, orientation and the velocity of the vehicle.
 
-At time t, MPC apply (![alt text][image11], ![alt text][image12]) which is also considered as the state of the car. These state cannot be ignored when delay is present.
+At time t, MPC applies (![alt text][image11], ![alt text][image12]) which is also considered as the state of the car. These states cannot be ignored when a delay is present.
 
 Given a driving path, there are 2 additional states: cross track error and orientation error. These states represent how much 
 the car derivate from the driving path.
@@ -107,19 +107,19 @@ The update equations are as follow:
 
 | Updated state          | Equation  |
 |:-----:| :-----:|
-| X direction | ![alt text][image2] |
-| Y direction | ![alt text][image3] |
+| X-direction | ![alt text][image2] |
+| Y-direction | ![alt text][image3] |
 | Orientation | ![alt text][image4] |
 | velocity | ![alt text][image5] |
 
 where ![alt text][image10] measures the distance between the center of mass of the vehicle and it's front axle. The larger the vehicle, the slower
-the turn rate. When a vehicle is at higher speed, the vehicle turn quicker than at lower speed, so v is also used to calculate the orientation of the car.
+the turn rate. When a vehicle is at higher speed, the car turns quicker than at lower speed, so v is also used to calculate the orientation of the car.
 
 
 ### Timestep length and elapse duration
 
 In the case of driving a car, elapse duration should be a few seconds, at most. Beyond that horizon, the environment 
-will change enough that it won't make sense to predict any further into the future.
+will change enough that it won't make sense to predict any further in the future.
 
 For the timestep length, MPC attempts to approximate a continuous reference trajectory by means of discrete paths between actuations. 
 Larger values of dt result in less frequent actuations, which makes it harder to accurately approximate a continuous 
@@ -134,19 +134,19 @@ Under reference velocity of 70mph, and delay of 0.1ms
 | 10 | 0.2 | (Chosen) The car completed a lap with speed around 50mph |
 | 10 | 0.1 | The car left the track |
 | 10 | 0.15 | The car left the track |
-| 10 | 0.5 | The car slow down to 20-30mph and completed a lap |
+| 10 | 0.5 | The car slowed down to 20-30mph and completed a lap |
 | 20 | 0.2 | The car completed a lap with speed around 50mph |
 
 After trying the above combination, I think that the combination  of N=10 and dt=0.2 is the best it is cheaper 
 to calculate the result is smaller than N=20 and dt=0.2, and give the fastest speed without leaving the track.
 
 When delay=0s, the car can complete a lap even when dt=0.1s, but where delay=0.1s, dt must be at least 0.2s 
-to keep the car on track in my implementation.
+to keep the car on the track in my implementation.
 
 Increasing N beyond the threshold makes no difference because the car will only take the steering angle and acceleration values
 of the first time interval [0, dt), which it is not likely to be affected by those future events.
 
-Decreasing N below the threshold make the car more likely to crash at the curve, because the car is not able to slow down
+Decreasing N below the threshold make the car more likely to crash at the curve because the car is not able to slow down
 before making a turn.
 
 ### Polynomial fitting and MPC Preprocessing
@@ -159,14 +159,14 @@ car coordination system.
 
 I then transform the path from world coordination system to the car coordination system.
 
-Under the car coordination system, the initial state of the car is (x'=0, y'=0, psi'=0, v'=v+a*dt). I than calculate the
+Under the car coordination system, the initial state of the car is (x'=0, y'=0, psi'=0, v'=v+a*dt). I then calculate the
 cross track error and the orientation error and pass them to the solver for the answer.
 
 You can refer to this part of [main.cpp](https://github.com/ymlai87416/CarND-MPC-Project/blob/01f19a62560dd1954a607ecb501ce585f939d671/src/main.cpp#L112-L115) for actual implementation.
 
 ### Model Predictive Control with Latency
 
-In this project, the Model Predictive Control have a pre-set latency of 100 millisecond. The 100 millisecond is set to allow
+In this project, the Model Predictive Control has a pre-set latency of 100 milliseconds. The 100 millisecond is set to allow
 MPC to calculate a more accurate solution and allow signal delay from other sensor components.
 
 Because of the delay, I have discussed the necessary code changes I have made in the previous section. They are
@@ -174,7 +174,7 @@ Because of the delay, I have discussed the necessary code changes I have made in
 2. Predicting the car position and orientation after 0.1s and use it as the origin of the car coordination system.
 
 #### The cost function
-In order for the MPC to find the control input, beside the kinematic model, I have to provide a cost function so that MPC 
+In order for the MPC to find the control input, besides the kinematic model, I have to provide a cost function so that MPC 
 can compare which set of solution (![alt text][image11], ![alt text][image12]) is better.
 
 Here are the possible cost function
@@ -185,8 +185,8 @@ Here are the possible cost function
 | Orientation error | The error penalizes if the car does not head the correct direction | ![alt text][image14] |
 | Soft constraint: Destination | It penalized if the car is not at the destination | ![alt text][image17] |
 | Soft constraint: Reference velocity | It penalized if the car is not driving at reference velocity | ![alt text][image18] |
-| Soft constraint: Steering angle | It penalized if the steering angle is to much | ![alt text][image15] |
-| Soft constraint: Rate of change in input | It penalized if the changes of the control inputs is too high | ![alt text][image16] |
+| Soft constraint: Steering angle | It penalized if the steering angle is too much | ![alt text][image15] |
+| Soft constraint: Rate of change in input | It penalized if the changes of the control inputs are too high | ![alt text][image16] |
 
 #### Final cost function
 
@@ -205,4 +205,4 @@ The optimization problem is:
 
 ## Simulation
 
-Here is the [result](https://youtu.be/UhaL21-VTg4)
+Here is the [result](https://youtu.be/iWmGchk89_4)
