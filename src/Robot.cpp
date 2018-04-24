@@ -76,7 +76,7 @@ void Robot::calculateSteeringAngleAndThrottle(double x, double y, double psi, do
   Eigen::VectorXd path = polyfit(vector_ptsx, vector_ptsy, 3);
 
   path_coeffs.clear();
-  for(int i=0; i<3; ++i)
+  for(int i=0; i<4; ++i)
     path_coeffs.push_back(path[i]);
 
   Eigen::VectorXd path_derivative = Eigen::VectorXd(2);

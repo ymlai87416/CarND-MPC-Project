@@ -127,6 +127,22 @@ int main() {
             next_y_vals.push_back(polyeval(path_coeffs, poly_inc*i));
           }
 
+          //debug
+          /*
+          std::cout << "***********" << std::endl;
+          for(size_t i=0; i<num_points; ++i){
+            std::cout << next_x_vals[i] << " " << next_y_vals[i] << ", ";
+          }
+          std::cout << std::endl;
+
+          for(size_t i=0; i<transform_ptsx.size(); ++i){
+            std::cout << transform_ptsx[i] << " " << transform_ptsy[i] << ", ";
+          }
+          std::cout << std::endl;
+
+          std::cout << "***********" << std::endl;
+          */
+
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
           // Otherwise the values will be in between [-deg2rad(25), deg2rad(25] instead of [-1, 1].
