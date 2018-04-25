@@ -81,7 +81,6 @@ int main() {
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
           double delta = j[1]["steering_angle"];
-          delta = delta * deg2rad(25);
           double a = j[1]["throttle"];
 
           /*
@@ -109,7 +108,7 @@ int main() {
           vector<double> path_coeffs;
 
           double px_d, py_d, psi_d, v_d;
-          robot.predictStateAfter(0.1, px, py, psi, v, delta/rad2deg(25), a, px_d, py_d, psi_d, v_d);
+          robot.predictStateAfter(0.1, px, py, psi, v, delta, a, px_d, py_d, psi_d, v_d);
           //std::cout << px << " " << px_d << " " << py << " " << py_d << " " << psi << " " << psi_d << std::endl;
 
           transformWayPointToCarPerspective(px_d, py_d, psi_d, ptsx, ptsy, transform_ptsx, transform_ptsy);
